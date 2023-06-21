@@ -44,7 +44,7 @@ nav ul li a{
 }
 
 nav ul li a:hover{
-    /*background-color:blue;*/
+    background-color:blue;
     color: white;
     transition: 500ms;
     
