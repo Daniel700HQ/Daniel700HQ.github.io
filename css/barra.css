@@ -1,7 +1,7 @@
 /*Inicio BARRA NAVEGACION*/
 
 nav{
-    background-color: blueviolet ;
+    /*background-color: blueviolet ;*/
     display: flex;
     align-items: center;
     text-align: center;
@@ -11,7 +11,7 @@ nav{
 }
 
 nav div {
-    background-color: greenyellow;
+    /*background-color: greenyellow;*/
     text-align: center;
     align-items: center;
 }
@@ -22,14 +22,14 @@ nav div h1 {
   }
 
 nav ul {
-    background-color: aqua;
+    /*background-color: aqua;*/
     display: inline-block;
     padding: 0px 10px;
     
 }
 
 nav ul li {
-    background-color:yellowgreen;
+    /*background-color:yellowgreen;*/
     margin: 6px;
     padding: 6px;
     list-style: none;
@@ -37,14 +37,14 @@ nav ul li {
 }
 
 nav ul li a{
-    background-color:yellowgreen;
+    /*background-color:yellowgreen;*/
     padding: 3px;
     list-style: none;
     
 }
 
 nav ul li a:hover{
-    background-color:blue;
+    /*background-color:blue;*/
     color: white;
     transition: 500ms;
     
