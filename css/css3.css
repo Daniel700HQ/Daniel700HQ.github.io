@@ -1,0 +1,52 @@
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    box-sizing: border-box;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+
+
+
+
+
+
+/*Ajustes contenido*/
+section article{
+    background-color: aqua;
+    padding-top: 20px;
+    height: 90%;
+    margin: 8px;
+}
+
+section h2{
+    margin-top: 20px;
+    display: block;
+    background-color: orange;
+}
+
+
+section article div{
+    display: block;
+}
+
+article div a {
+    background-color: blueviolet;
+}
+
+section article div img{
+    height: 60%;
+    width: 60%;
+}
+
+
+@media screen and (min-width: 508px) {
+
+    section article div{
+        display: flex;
+    }
+
+}
+
+
+

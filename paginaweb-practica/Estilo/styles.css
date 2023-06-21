@@ -1,0 +1,91 @@
+/* Comentario */
+/* Estructura del CSS :  
+
+
+etiqueta {
+    Ajuste:valor;
+    AJuste2:valor;
+}
+
+*/
+
+
+h1 {
+    color: blue;
+    font-size: 65px;
+} 
+
+#Marcas {
+    color:brown;
+    font-size: 50px;
+}
+
+.TextoDeLaPagina {
+    margin: 20px;
+    padding: 50px 40px;
+    font-size: 33px;
+    text-align: center;
+    font-family: 'Poppins', Roboto;
+
+}
+
+
+.RUSIA {
+    font-size: 120px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+/*
+
+body {
+    background-image: url('../IMG/1431073805_364256_1431074046_noticia_normal.jpg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-attachment: fixed;
+}
+*/
+
+
+section img {
+    float: left;
+    margin-right: 15px;
+}
+
+.imagenHaciaLaIzquierda {
+    width: 256px;
+}
+
+.BarraDeNavegacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+}
+
+.boton1 {
+    margin-right: auto;
+}
+
+
+a:link{
+    color: chartreuse;
+}
+a:visited{
+    color: darkgoldenrod;
+}
+
+a:hover{
+    color: brown;
+}
+
+a:active{
+    color: darkgreen;
+}
+
+.container {
+    background-color: brown;
+}
+
+.container-fluid {
+    background-color: chocolate;
+}

@@ -1,0 +1,66 @@
+/*Inicio BARRA NAVEGACION*/
+
+nav{
+    background-color: blueviolet ;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+    font-weight: bold;
+    
+}
+
+nav div {
+    background-color: greenyellow;
+    text-align: center;
+    align-items: center;
+}
+
+nav div h1 {
+    color: brown;
+    font-size: 24px; 
+  }
+
+nav ul {
+    background-color: aqua;
+    display: inline-block;
+    padding: 0px 10px;
+    
+}
+
+nav ul li {
+    background-color:yellowgreen;
+    margin: 6px;
+    padding: 6px;
+    list-style: none;
+    
+}
+
+nav ul li a{
+    background-color:yellowgreen;
+    padding: 3px;
+    list-style: none;
+    
+}
+
+nav ul li a:hover{
+    background-color:blue;
+    color: white;
+    transition: 500ms;
+    
+}
+
+@media screen and (min-width: 508px) {
+
+    nav div {
+        display: flex;
+    }
+
+    nav ul{
+        display: flex;
+        margin: 4px;
+    }
+}
+
+
+/*FIN BARRA NAVEGACION*/
