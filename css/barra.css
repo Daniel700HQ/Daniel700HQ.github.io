@@ -59,6 +59,7 @@ nav ul li a:hover{
     nav ul{
         display: flex;
         margin: 4px;
+        font-size: 20px;
     }
 }
 
