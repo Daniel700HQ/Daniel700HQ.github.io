@@ -50,7 +50,7 @@ nav ul li a:hover{
     
 }
 
-@media screen and (min-width: 508px) {
+@media screen and (min-width: 608px) {
 
     nav div {
         display: flex;
