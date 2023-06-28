@@ -40,7 +40,7 @@ section article div img{
 }
 
 
-@media screen and (min-width: 608px) {
+@media screen and (min-width: 508px) {
 
     section article div{
         display: flex;
