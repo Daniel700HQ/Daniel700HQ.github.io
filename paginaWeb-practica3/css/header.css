@@ -1,0 +1,19 @@
+header {
+    background-color: blue;
+    padding: 20px;
+}
+
+header #headerPrincipal {
+    background-color: yellow;
+    padding: 20px;
+}
+
+header #menuDesplegable {
+    background-color: orange;
+    padding: 20px;
+}
+
+header #menuDesplegable ul{
+    background-color: red;
+    display: none;
+}
