@@ -24,7 +24,8 @@ nav div h1 {
 
 nav ul {
     /*background-color: aqua;*/
-    display: inline-block;
+    /*display: inline-block;*/
+    display: block;
     padding: 0px 10px;
     
 }
