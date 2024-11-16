@@ -12,6 +12,7 @@ nav{
 
 nav div {
     /*background-color: greenyellow;*/
+    display: block;
     text-align: center;
     align-items: center;
 }
