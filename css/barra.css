@@ -2,7 +2,7 @@
 
 nav{
     /*background-color: blueviolet ;*/
-    display: flex;
+    display: block;
     align-items: center;
     text-align: center;
     justify-content: space-between;
