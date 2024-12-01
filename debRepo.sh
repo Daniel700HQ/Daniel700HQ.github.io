@@ -24,7 +24,7 @@ EOF
 
 # Actualizar los repositorios e instalar las actualizaciones
 echo "Actualizando la lista de paquetes e instalando actualizaciones..."
-apt update && apt upgrade -y
+apt update
 
 # Crear un nuevo usuario
 echo "Introduce el nombre del nuevo usuario: "
