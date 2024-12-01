@@ -110,12 +110,11 @@ EOF
         systemctl restart wg-quick@wg0
         echo "Configuración del cliente generada en: $CLIENT_CONF" | tee -a $LOG_FILE
         echo "Código QR para el cliente:" | tee -a $LOG_FILE
-        qrencode -t ansiutf8 < $CLIENT_CONF
+        qrencode -o "/tmp/${CLIENT_NAME}_qr.png" < $CLIENT_CONF
+        echo "El QR ha sido generado como /tmp/${CLIENT_NAME}_qr.png"
     else
         echo "No se creó un cliente WireGuard." | tee -a $LOG_FILE
     fi
 else
     echo "WireGuard no fue instalado ni configurado." | tee -a $LOG_FILE
 fi
-
-echo "Resumen de configuraciones guardado en $LOG_FILE"
