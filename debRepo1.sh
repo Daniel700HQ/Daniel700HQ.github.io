@@ -24,9 +24,8 @@ EOF
 
 # Actualizar los repositorios e instalar las actualizaciones
 echo "Actualizando la lista de paquetes e instalando actualizaciones..."
-apt update
-apt install -y sudo xfce4 xfce4-goodies lightdm firefox-esr iptables iptables-persistent gnome-themes-extra network-manager network-manager-gnome wireguard wireguard-tools qrencode
-wget https://github.com/rustdesk/rustdesk/releases/download/1.3.3/rustdesk-1.3.3-x86_64.deb && apt install ./rustdesk-1.3.3-x86_64.deb
+apt update && apt install -y sudo xfce4 xfce4-goodies lightdm firefox-esr iptables iptables-persistent gnome-themes-extra network-manager network-manager-gnome wireguard wireguard-tools qrencode && wget https://github.com/rustdesk/rustdesk/releases/download/1.3.3/rustdesk-1.3.3-x86_64.deb && apt install ./rustdesk-1.3.3-x86_64.deb
+
 
 # Preguntar si se desea crear un nuevo usuario
 echo "¿Quieres crear un nuevo usuario? (s/n): "
