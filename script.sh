@@ -1,59 +1,121 @@
 #!/bin/bash
 
-# Verificar permisos de superusuario
-if [[ $EUID -ne 0 ]]; then
-    echo "Este script debe ejecutarse como root. Usa sudo." >&2
+# Verificar permisos de root
+if [ "$EUID" -ne 0 ]; then
+    echo "Por favor, ejecuta este script como root."
     exit 1
 fi
 
-WG_DIR="/etc/wireguard"
-WG_CONF="$WG_DIR/wg0.conf"
-WG_INTERFACE="wg0"
-SERVER_IP_RANGE="10.0.0.1/24"
-SERVER_PORT="51820"
-NETWORK_INTERFACE="eth0" # Cambia esto según la interfaz de red de tu servidor.
+# Archivo de resumen
+LOG_FILE="setup_summary.log"
+> $LOG_FILE
 
-echo "=== Creando claves públicas y privadas ==="
-mkdir -p "$WG_DIR"
+# Función para preguntar al usuario
+preguntar() {
+    local pregunta=$1
+    local respuesta
+    while true; do
+        read -rp "$pregunta (s/n): " respuesta
+        case "$respuesta" in
+            [sS]*) echo "yes" ;;
+            [nN]*) echo "no" ;;
+            *) echo "Respuesta inválida. Por favor, responde 's' o 'n'." ;;
+        esac
+        [[ "$respuesta" =~ ^[sSnN]$ ]] && break
+    done
+    [[ "$respuesta" =~ ^[sS]$ ]]
+}
 
-# Generar claves del servidor
-wg genkey | tee "$WG_DIR/server_private.key" | wg pubkey > "$WG_DIR/server_public.key"
+# Agregar repositorios de Debian Bookworm
+if preguntar "¿Deseas agregar los repositorios de Debian Bookworm?"; then
+    echo "Agregando repositorios de Debian Bookworm..." | tee -a $LOG_FILE
+    echo "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list
+    echo "deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware" >> /etc/apt/sources.list
+    echo "Repositorios de Bookworm agregados." | tee -a $LOG_FILE
+else
+    echo "Repositorios de Debian Bookworm no fueron agregados." | tee -a $LOG_FILE
+fi
 
-# Proteger claves privadas
-chmod 600 "$WG_DIR/server_private.key"
+# Instalar XFCE
+if preguntar "¿Deseas instalar XFCE?"; then
+    echo "Instalando XFCE..." | tee -a $LOG_FILE
+    apt update && apt install -y xfce4 xfce4-goodies lightdm network-manager-gnome
+    echo "XFCE instalado correctamente." | tee -a $LOG_FILE
+else
+    echo "XFCE no fue instalado." | tee -a $LOG_FILE
+fi
 
-# Leer claves generadas
-SERVER_PRIVATE_KEY=$(cat "$WG_DIR/server_private.key")
-SERVER_PUBLIC_KEY=$(cat "$WG_DIR/server_public.key")
+# Instalar y configurar WireGuard
+if preguntar "¿Deseas instalar y configurar WireGuard?"; then
+    echo "Instalando y configurando WireGuard..." | tee -a $LOG_FILE
+    apt install -y wireguard qrencode iptables-persistent
+    WG_DIR="/etc/wireguard"
+    SERVER_CONF="$WG_DIR/wg0.conf"
+    SERVER_PRIVATE_KEY=$(wg genkey)
+    SERVER_PUBLIC_KEY=$(echo "$SERVER_PRIVATE_KEY" | wg pubkey)
+    SERVER_PORT=51820
+    SERVER_IP="10.0.0.1/24"
 
-echo "=== Configurando el archivo $WG_CONF ==="
-cat << EOF > "$WG_CONF"
+    mkdir -p $WG_DIR && chmod 700 $WG_DIR
+    cat <<EOF > $SERVER_CONF
 [Interface]
-Address = $SERVER_IP_RANGE
+Address = $SERVER_IP
 SaveConfig = true
 ListenPort = $SERVER_PORT
 PrivateKey = $SERVER_PRIVATE_KEY
-
-# Configuración de red
-PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o $NETWORK_INTERFACE -j MASQUERADE
-PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o $NETWORK_INTERFACE -j MASQUERADE
 EOF
 
-chmod 600 "$WG_CONF"
+    echo "Habilitando reenvío de paquetes..." | tee -a $LOG_FILE
+    echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/99-sysctl.conf
+    sysctl --system
 
-echo "=== Habilitando el reenvío de paquetes ==="
-# Habilitar reenvío en sysctl
-sysctl_conf="/etc/sysctl.conf"
-if ! grep -q "net.ipv4.ip_forward=1" "$sysctl_conf"; then
-    echo "net.ipv4.ip_forward=1" >> "$sysctl_conf"
+    echo "Configurando reglas de firewall..." | tee -a $LOG_FILE
+    iptables -A FORWARD -i wg0 -j ACCEPT
+    iptables -A FORWARD -o wg0 -j ACCEPT
+    iptables -t nat -A POSTROUTING -o $(ip route | grep default | awk '{print $5}') -j MASQUERADE
+    iptables-save > /etc/iptables/rules.v4
+
+    systemctl enable wg-quick@wg0
+    systemctl start wg-quick@wg0
+    echo "WireGuard instalado y configurado." | tee -a $LOG_FILE
+
+    # Crear cliente WireGuard
+    if preguntar "¿Deseas crear un cliente WireGuard y ver su QR?"; then
+        CLIENT_NAME="cliente1"
+        CLIENT_PRIVATE_KEY=$(wg genkey)
+        CLIENT_PUBLIC_KEY=$(echo "$CLIENT_PRIVATE_KEY" | wg pubkey)
+        CLIENT_IP="10.0.0.2/32"
+
+        CLIENT_CONF="$WG_DIR/$CLIENT_NAME.conf"
+        cat <<EOF > $CLIENT_CONF
+[Interface]
+PrivateKey = $CLIENT_PRIVATE_KEY
+Address = $CLIENT_IP
+DNS = 8.8.8.8
+
+[Peer]
+PublicKey = $SERVER_PUBLIC_KEY
+Endpoint = $(hostname -I | awk '{print $1}'):$SERVER_PORT
+AllowedIPs = 0.0.0.0/0, ::/0
+PersistentKeepalive = 25
+EOF
+
+        cat <<EOF >> $SERVER_CONF
+
+[Peer]
+PublicKey = $CLIENT_PUBLIC_KEY
+AllowedIPs = $CLIENT_IP
+EOF
+
+        systemctl restart wg-quick@wg0
+        echo "Configuración del cliente generada en: $CLIENT_CONF" | tee -a $LOG_FILE
+        echo "Código QR para el cliente:" | tee -a $LOG_FILE
+        qrencode -t ansiutf8 < $CLIENT_CONF
+    else
+        echo "No se creó un cliente WireGuard." | tee -a $LOG_FILE
+    fi
+else
+    echo "WireGuard no fue instalado ni configurado." | tee -a $LOG_FILE
 fi
-sysctl -p
 
-echo "=== Iniciando y habilitando el servicio WireGuard ==="
-systemctl enable wg-quick@$WG_INTERFACE
-systemctl start wg-quick@$WG_INTERFACE
-
-echo "=== Configuración completada ==="
-echo "Clave privada del servidor: $SERVER_PRIVATE_KEY"
-echo "Clave pública del servidor: $SERVER_PUBLIC_KEY"
-echo "Archivo de configuración creado en $WG_CONF"
+echo "Resumen de configuraciones guardado en $LOG_FILE"
