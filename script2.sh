@@ -16,13 +16,16 @@ listar_clientes() {
     grep -E "\[Peer\]" -A 2 $SERVER_CONF | grep "AllowedIPs" | awk '{print $3}' | cut -d '/' -f1
 }
 
-# Función para ver QR de un cliente
+# Función para ver QR de un cliente (como imagen PNG)
 ver_qr() {
     echo "Ingrese el nombre del cliente para ver su QR:"
     read -rp "Cliente: " cliente
     CLIENT_CONF="$WG_DIR/${cliente}.conf"
     if [ -f "$CLIENT_CONF" ]; then
-        qrencode -t ansiutf8 < "$CLIENT_CONF"
+        # Generar el archivo PNG con el QR
+        qrencode -o "/tmp/${cliente}_qr.png" < "$CLIENT_CONF"
+        echo "El QR ha sido generado como /tmp/${cliente}_qr.png"
+        echo "Puedes abrirlo con cualquier visor de imágenes o navegador."
     else
         echo "El cliente $cliente no existe."
     fi
@@ -87,7 +90,7 @@ while true; do
     echo "  Gestión de clientes de WireGuard"
     echo "=========================================="
     echo "1) Listar clientes"
-    echo "2) Ver QR de un cliente"
+    echo "2) Ver QR de un cliente (Imagen PNG)"
     echo "3) Editar un cliente"
     echo "4) Borrar un cliente"
     echo "5) Borrar toda la configuración de WireGuard"
