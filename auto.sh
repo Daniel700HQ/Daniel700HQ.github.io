@@ -23,26 +23,31 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # ===========================
+# Agregar repositorios de Debian Bookworm
+# ===========================
+echo "Agregando repositorios de Debian Bookworm..."
+cat > /etc/apt/sources.list <<EOF
+# Repositorios principales de Debian Bookworm
+deb http://deb.debian.org/debian/ bookworm main contrib non-free
+deb-src http://deb.debian.org/debian/ bookworm main contrib non-free
+
+# Actualizaciones de seguridad
+deb http://security.debian.org/debian-security bookworm-security main contrib non-free
+deb-src http://security.debian.org/debian-security bookworm-security main contrib non-free
+
+# Actualizaciones de Debian Bookworm
+deb http://deb.debian.org/debian/ bookworm-updates main contrib non-free
+deb-src http://deb.debian.org/debian/ bookworm-updates main contrib non-free
+EOF
+
+# Actualizar el índice de paquetes
+apt update
+
+# ===========================
 # Instalación de Paquetes Necesarios
 # ===========================
 echo "Instalando paquetes necesarios..."
-
-# Lista de paquetes necesarios
-PACKAGES=(
-    xfce4
-    xfce4-goodies
-    firefox-esr
-    wireguard
-    qrencode
-    iptables
-    iproute2
-    network-manager
-    network-manager-gnome
-    ristretto
-)
-
-# Instalación de los paquetes
-apt install -y "${PACKAGES[@]}"
+apt install -y xfce4 xfce4-goodies firefox-esr wireguard qrencode iptables iproute2 network-manager network-manager-gnome ristretto
 
 # ===========================
 # Configuración de WireGuard
