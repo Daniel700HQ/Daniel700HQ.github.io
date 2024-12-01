@@ -23,11 +23,26 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # ===========================
-# Actualización e instalación
+# Instalación de Paquetes Necesarios
 # ===========================
-echo "Actualizando paquetes e instalando dependencias..."
-apt update && apt upgrade -y
-apt install -y xfce4 xfce4-goodies firefox-esr wireguard qrencode iptables iproute2 network-manager network-manager-gnome
+echo "Instalando paquetes necesarios..."
+
+# Lista de paquetes necesarios
+PACKAGES=(
+    xfce4
+    xfce4-goodies
+    firefox-esr
+    wireguard
+    qrencode
+    iptables
+    iproute2
+    network-manager
+    network-manager-gnome
+    ristretto
+)
+
+# Instalación de los paquetes
+apt install -y "${PACKAGES[@]}"
 
 # ===========================
 # Configuración de WireGuard
