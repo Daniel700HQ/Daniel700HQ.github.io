@@ -24,24 +24,34 @@ EOF
 
 # Actualizar los repositorios e instalar las actualizaciones
 echo "Actualizando la lista de paquetes e instalando actualizaciones..."
-apt update
+apt update && apt upgrade -y
 
-# Crear un nuevo usuario
-echo "Introduce el nombre del nuevo usuario: "
-read USERNAME
+# Preguntar si se desea crear un nuevo usuario
+echo "¿Quieres crear un nuevo usuario? (s/n): "
+read CREATE_USER
 
-# Solicitar la contraseña del nuevo usuario
-echo "Introduce la contraseña para el usuario '$USERNAME': "
-read -s PASSWORD
+if [[ "$CREATE_USER" == "s" || "$CREATE_USER" == "S" ]]; then
+    # Crear un nuevo usuario
+    echo "Introduce el nombre del nuevo usuario: "
+    read USERNAME
 
-# Crear el usuario
-useradd -m -s /bin/bash "$USERNAME"
+    # Solicitar la contraseña del nuevo usuario
+    echo "Introduce la contraseña para el usuario '$USERNAME': "
+    read -s PASSWORD
 
-# Asignar la contraseña al usuario
-echo "$USERNAME:$PASSWORD" | chpasswd
+    # Crear el usuario
+    useradd -m -s /bin/bash "$USERNAME"
 
-# Agregar al usuario a sudoers
-usermod -aG sudo "$USERNAME"
+    # Asignar la contraseña al usuario
+    echo "$USERNAME:$PASSWORD" | chpasswd
+
+    # Agregar al usuario a sudoers
+    usermod -aG sudo "$USERNAME"
+
+    echo "Usuario '$USERNAME' creado con éxito."
+else
+    echo "No se creará un nuevo usuario."
+fi
 
 # Instalar los paquetes necesarios
 echo "Instalando los paquetes requeridos..."
@@ -59,10 +69,17 @@ apt install -y \
     wireguard-tools \
     qrencode
 
-# Habilitar y arrancar lightdm
-echo "Habilitando LightDM para iniciar la sesión gráfica..."
-systemctl enable lightdm
-systemctl start lightdm
+# Preguntar si se desea iniciar LightDM
+echo "¿Quieres iniciar LightDM automáticamente? (s/n): "
+read START_LIGHTDM
+
+if [[ "$START_LIGHTDM" == "s" || "$START_LIGHTDM" == "S" ]]; then
+    echo "Habilitando LightDM para iniciar la sesión gráfica..."
+    systemctl enable lightdm
+    systemctl start lightdm
+else
+    echo "LightDM no se iniciará automáticamente."
+fi
 
 # Configuración de WireGuard
 
@@ -76,7 +93,7 @@ wg genkey | tee /etc/wireguard/server.key | wg pubkey > /etc/wireguard/server.pu
 # Obtener la dirección IP local
 LOCAL_IP=$(hostname -I | awk '{print $1}')
 
-# Crear la configuración del servidor WireGuard
+# Crear la configuración del servidor WireGuard (wg0.conf)
 echo "Creando archivo de configuración de WireGuard para el servidor..."
 cat <<EOF > /etc/wireguard/wg0.conf
 [Interface]
@@ -118,6 +135,9 @@ Endpoint = $LOCAL_IP:51820
 AllowedIPs = 0.0.0.0/0, ::/0
 PersistentKeepalive = 25
 EOF
+
+# Reemplazar la clave pública del cliente en la configuración del servidor
+sed -i "s/CLIENT_PUBLIC_KEY/$(cat /etc/wireguard/client.pub)/" /etc/wireguard/wg0.conf
 
 # Generar el código QR para el cliente
 echo "Generando el código QR para el cliente..."
