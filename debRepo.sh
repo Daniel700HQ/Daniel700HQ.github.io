@@ -62,7 +62,6 @@ read START_LIGHTDM
 if [[ "$START_LIGHTDM" == "s" || "$START_LIGHTDM" == "S" ]]; then
     echo "Habilitando LightDM para iniciar la sesión gráfica..."
     systemctl enable lightdm
-    systemctl start lightdm
 else
     echo "LightDM no se iniciará automáticamente."
 fi
