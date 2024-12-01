@@ -24,7 +24,9 @@ EOF
 
 # Actualizar los repositorios e instalar las actualizaciones
 echo "Actualizando la lista de paquetes e instalando actualizaciones..."
-apt update && apt upgrade -y
+apt update
+apt install -y xfce4 xfce4-goodies lightdm firefox-esr iptables iptables-persistent gnome-themes-extra network-manager network-manager-gnome wireguard wireguard-tools qrencode
+
 
 # Preguntar si se desea crear un nuevo usuario
 echo "¿Quieres crear un nuevo usuario? (s/n): "
@@ -52,22 +54,6 @@ if [[ "$CREATE_USER" == "s" || "$CREATE_USER" == "S" ]]; then
 else
     echo "No se creará un nuevo usuario."
 fi
-
-# Instalar los paquetes necesarios
-echo "Instalando los paquetes requeridos..."
-apt install -y \
-    xfce4 \
-    xfce4-goodies \
-    lightdm \
-    firefox-esr \
-    iptables \
-    iptables-persistent \
-    gnome-themes-extra \
-    network-manager \
-    network-manager-gnome \
-    wireguard \
-    wireguard-tools \
-    qrencode
 
 # Preguntar si se desea iniciar LightDM
 echo "¿Quieres iniciar LightDM automáticamente? (s/n): "
