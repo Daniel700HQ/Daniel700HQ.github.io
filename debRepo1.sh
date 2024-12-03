@@ -10,16 +10,16 @@ fi
 echo "Añadiendo repositorios de Debian Bookworm..."
 cat <<EOF > /etc/apt/sources.list
 # Repositorios oficiales de Debian Bookworm
-deb http://deb.debian.org/debian/ bookworm main contrib non-free
-deb-src http://deb.debian.org/debian/ bookworm main contrib non-free
+deb http://deb.debian.org/debian/ bookworm main contrib non-free non-free-firmware
+deb-src http://deb.debian.org/debian/ bookworm main contrib non-free non-free-firmware
 
 # Actualizaciones de seguridad
-deb http://security.debian.org/debian-security bookworm-security main contrib non-free
-deb-src http://security.debian.org/debian-security bookworm-security main contrib non-free
+deb http://security.debian.org/debian-security bookworm-security main contrib non-free non-free-firmware
+deb-src http://security.debian.org/debian-security bookworm-security main contrib non-free non-free-firmware
 
 # Actualizaciones
-deb http://deb.debian.org/debian/ bookworm-updates main contrib non-free
-deb-src http://deb.debian.org/debian/ bookworm-updates main contrib non-free
+deb http://deb.debian.org/debian/ bookworm-updates main contrib non-free non-free-firmware
+deb-src http://deb.debian.org/debian/ bookworm-updates main contrib non-free non-free-firmware
 EOF
 
 # Actualizar los repositorios e instalar las actualizaciones
